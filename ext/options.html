@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="options.css">
+
+<script type="text/javascript">
+    function loadOptions() {
+        if (localStorage.host) document.getElementById("host").value = localStorage.host;
+        if (localStorage.port) document.getElementById("port").value = localStorage.port;
+        if (localStorage.username) document.getElementById("username").value = localStorage.username;
+        if (localStorage.password) document.getElementById("password").value = localStorage.password;
+        if (localStorage.https) document.getElementById("https").checked = (localStorage.https == "true");
+        if (localStorage.confirmation) document.getElementById("confirmation").checked = (localStorage.confirmation == "true");
+
+        updateUrl();
+	}
+
+    function saveOptions() {
+        localStorage.host = document.getElementById("host").value;
+        localStorage.port = document.getElementById("port").value;
+        localStorage.username = document.getElementById("username").value;
+        localStorage.password = document.getElementById("password").value;
+        localStorage.https = document.getElementById("https").checked;
+        localStorage.confirmation = document.getElementById("confirmation").checked;
+
+        var status = document.getElementById("savedStatus");
+        status.style.setProperty("-webkit-transition", "opacity 0s ease-in");
+        status.style.opacity = 1;
+
+        setTimeout("hideStatus()", 2000);
+    }
+
+    function hideStatus() {
+        var status = document.getElementById("savedStatus");
+        status.style.setProperty("-webkit-transition", "opacity 0.5s ease-in");
+        status.style.opacity = 0
+    }
+
+    function updateUrl() {
+        var url;
+        var host = document.getElementById("host").value;
+        if (host) {
+            url = document.getElementById("https").checked ? "https://" : "http://";
+            url += document.getElementById("host").value + ":";
+            url += document.getElementById("port").value + "/gui/";
+        } else {
+            url = "";
+        }
+        document.getElementById("url").innerHTML = url;
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+        loadOptions();
+    });
+
+</script>
+
+
+<div class="options">
+    <h1><img src="logo.png"/> &micro;Torrent Remote Adder</h1>
+    <h2>Extension Options</h2>
+
+    <fieldset>
+        <legend>&micro;Torrent Server</legend>
+        <div class="option"> 
+            <div class="name">Server:</div>
+            <div class="value"><input type="text" id="host" onchange="updateUrl()"
+                    title="&micro;Torrent Server host name or IP address (host.server.com or 192.168.1.12)"/></div>
+        </div>
+        <div class="option">
+            <div class="name">Port:</div>
+            <div class="value"><input type="text" id="port" onchange="updateUrl()"
+                    title="&micro;Torrent WebUI port number"/></div>
+        </div>
+        <div class="option">
+            <div class="name">Use HTTPS</div>
+            <div class="value"><input type="checkbox" id="https" onchange="updateUrl()"/></div>
+        </div>
+        <div class="option">
+            <div class="name">&micro;Torrent WebUI URL:</div>
+            <div class="value"><span id="url"/></div>
+        </div>
+    </fieldset>
+    <fieldset>
+            <legend>&micro;Torrent Login</legend>
+        <div class="option">
+            <div class="name">Username:</div>
+            <div class="value"><input type="text" id="username"/></div>
+        </div>
+        <div class="option">
+            <div class="name">Password:</div>
+            <div class="value"><input type="password" id="password"/></div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>Miscellaneous</legend>
+        <div class="option">
+            <div class="name">Display Confirmation message</div>
+            <div class="value"><input type="checkbox" id="confirmation"/></div>
+        </div>
+    </fieldset>
+    <div class="instr"><a href="http://www.utorrent.com/documentation/webui">&micro;Torrent Web UI Instructions</a></div>
+    <div class="buttons">
+          <button id="save_button"  onClick="saveOptions()">Save</button>
+          <span id="savedStatus">Options saved.</span>
+    </div>
+
+    <div class="copy">created by  <a href="mailto:vsgvsg@gmail.com">vsg</a></div>
+
+</div>
