@@ -2,12 +2,6 @@
  * @(#)adder.js
  *
  * Copyright (c) vsgvsg@gmail.com
- *
- * Remote Adder for µTorrent WebUI.
- *
- * Adds a menu item to the Chrome context menu for links.
- * On menu click downloads a file at link's URL and immediately uploads it to
- * the remote instance of µTorrent via WebUI API.
  */
 var adder = function() {
 
