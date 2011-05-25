@@ -1,15 +1,22 @@
 {
-   "background_page": "background.html",
-   "description": "Adds a context menu item that allows you to send .torrent link directly to a remote instance of \u00B5Torrent.",
-   "icons": {
-      "128": "icon128.png",
-      "48": "icon48.png",
-      "16": "icon.png"
-   },
-   "name": "uTorrent Remote Addder",
-   "options_page": "options.html",
-   "permissions": [ "cookies", "http://*/*", "https://*/*", "contextMenus" ],
-   "version": "2.0",
-   "minimum_chrome_version": "10"
+    "background_page": "background.html",
+    "description": "Adds a context menu item that allows you to send .torrent file directly to a remote instance of \u00B5Torrent.",
+    "content_scripts": [{
+        "all_frames": true,
+        "js": [ "notification.js" ],
+        "matches": [ "http://*/*", "https://*/*", "file:///*" ],
+        "run_at": "document_end"
+    }],
+
+    "icons": {
+        "128": "icon128.png",
+        "48": "icon48.png",
+        "16": "icon.png"
+    },
+    "name": "uTorrent Remote Addder",
+    "options_page": "options.html",
+    "permissions": [ "tabs", "http://*/*", "https://*/*", "file:///*", "contextMenus" ],
+    "version": "2.1",
+    "minimum_chrome_version": "10"
 
 }

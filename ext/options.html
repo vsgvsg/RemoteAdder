@@ -8,7 +8,8 @@
         if (localStorage.username) document.getElementById("username").value = localStorage.username;
         if (localStorage.password) document.getElementById("password").value = localStorage.password;
         if (localStorage.https) document.getElementById("https").checked = (localStorage.https == "true");
-        if (localStorage.confirmation) document.getElementById("confirmation").checked = (localStorage.confirmation == "true");
+        if (localStorage.notifications) document.getElementById("notifications").checked = (localStorage.notifications != "false"); // check by default
+        if (localStorage.autohide) document.getElementById("autohide").checked = (localStorage.autohide == "true");
 
         updateUrl();
 	}
@@ -19,7 +20,8 @@
         localStorage.username = document.getElementById("username").value;
         localStorage.password = document.getElementById("password").value;
         localStorage.https = document.getElementById("https").checked;
-        localStorage.confirmation = document.getElementById("confirmation").checked;
+        localStorage.notifications = document.getElementById("notifications").checked;
+        localStorage.autohide = document.getElementById("autohide").checked;
 
         var status = document.getElementById("savedStatus");
         status.style.setProperty("-webkit-transition", "opacity 0s ease-in");
@@ -93,8 +95,12 @@
     <fieldset>
         <legend>Miscellaneous</legend>
         <div class="option">
-            <div class="name">Display Confirmation message</div>
-            <div class="value"><input type="checkbox" id="confirmation"/></div>
+            <div class="name">Display Notifications</div>
+            <div class="value"><input type="checkbox" id="notifications" checked="checked"/></div>
+        </div>
+        <div class="option">
+            <div class="name">Auto-hide Notifications after 10 seconds</div>
+            <div class="value"><input type="checkbox" id="autohide"/></div>
         </div>
     </fieldset>
     <div class="instr"><a href="http://www.utorrent.com/documentation/webui">&micro;Torrent Web UI Instructions</a></div>

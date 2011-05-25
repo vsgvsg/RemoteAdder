@@ -10,7 +10,7 @@ var adder = function() {
 
     // verifies that this extension is properly configured
     var checkConfig = function() {
-        if (typeof(localStorage.host) == 'undefined') {
+        if (typeof(localStorage.host) == "undefined") {
             alert("You need to provide login information first.\n\n" +
                 "Please go to  Tools | Extensions | uTorrent Remote Adder | Options to configure this extension.");
             return false;
@@ -19,9 +19,9 @@ var adder = function() {
         return true;
     };
 
-    // returns true if user selected Display Confirmation option
+    // returns true only if user never unselected Display Notifications option
     var showConfirmation = function() {
-        return  localStorage["confirmation"] == "true";
+        return  localStorage["notifications"] != "false";
     };
 
     // returns WebUI login url
@@ -53,7 +53,7 @@ var adder = function() {
             xhr.open("GET", getLoginUrl() + "/gui/token.html", false);
             xhr.send(null);
         } catch(e) {
-            alert("Error connecting to uTorrent WebUI");
+            displayError("Error connecting to \u00B5Torrent WebUI");
             return null;
         }
 
@@ -75,7 +75,7 @@ var adder = function() {
         }
 
         // convert response to an object
-        return eval("(" + xhr.responseText + ")");
+        return JSON.parse(xhr.responseText);
     };
 
 
@@ -103,12 +103,12 @@ var adder = function() {
         // check for errors
         var response = null;
         try {
-            response = eval("(" + responseText + ")");
+            response = JSON.parse(responseText);
         } catch(err) {
-            alert("Unexpected error while adding torrent");
+            displayError("Unexpected error while adding torrent: " + err.toString());
         }
         if (response.error) {
-            alert("Error adding torrent!\n\n" + response.error);
+            displayError("Error: " + response.error);
         } else if (showConfirmation()) {
 
             // get the name of the last torrent in the list
@@ -116,7 +116,7 @@ var adder = function() {
             var torrents = list.torrentp || list.torrents;
             if (torrents) {
                 var torrent = torrents[torrents.length - 1];
-                alert("Torrent added: \n\n" + torrent[2]);
+                displayMessage("Torrent added: " + torrent[2]);
             }
         }
     };
@@ -125,18 +125,48 @@ var adder = function() {
     var downloadFile = function(url, callback) {
         var xhr = new XMLHttpRequest();
 
-        xhr.open('GET', url, true);
-        xhr.overrideMimeType('text/plain; charset=x-user-defined');
-        xhr.responseType = 'arraybuffer';
+        var filename = url.substring(url.lastIndexOf("/") + 1);
+        displayMessage("Downloading " + filename + "...");
+
+        xhr.open("GET", url, true);
+        xhr.overrideMimeType("text/plain; charset=x-user-defined");
+        xhr.responseType = "arraybuffer";
 
         xhr.onload = function() {
             var blob = new WebKitBlobBuilder();
             blob.append(xhr.response);
 
+            displayMessage("Sending " + filename + " to \u00B5Torrent...");
             callback(blob.getBlob());
         };
 
         xhr.send(null);
+    };
+
+    // sends notification message to notification script
+    var displayMessage = function(msg) {
+        // send notification msg
+        if (showConfirmation()) {
+            chrome.tabs.getSelected(null, function(tab) {
+                chrome.tabs.sendRequest(tab.id, {greeting: "utaNotification", msg: msg});
+            });
+        }
+    };
+
+    // sends error message to notification script
+    var displayError = function(msg) {
+        // send notification msg
+        chrome.tabs.getSelected(null, function(tab) {
+            chrome.tabs.sendRequest(tab.id, {greeting: "utaNotification", msg: msg});
+        });
+    };
+
+    // sends hide notification bar message to notification script
+    var hideMessages = function() {
+        // send notification msg
+        chrome.tabs.getSelected(null, function(tab) {
+            chrome.tabs.sendRequest(tab.id, {greeting: "utaHide"});
+        });
     };
 
     // public interface
@@ -154,17 +184,26 @@ var adder = function() {
             if (!token) {
                 return false;
             }
+            try {
+                displayMessage("Connected to \u00B5Torrent...");
 
-            downloadFile(info.linkUrl, uploadTorrent);
+                downloadFile(info.linkUrl, uploadTorrent);
+            } finally {
+                if (localStorage["autohide"] == "true") {
+                    hideMessages();
+                }
+            }
 
             return true;
         }
     };
 }();
 
-// adds 'Add to uTorrent' menu item to the context menu
+// add 'Add to uTorrent' menu item to the context menu
 chrome.contextMenus.create({
     "title": "Add to \u00B5Torrent",
     "contexts":["link"],
     "onclick": adder.addTorrent
 });
+
+
