@@ -4,7 +4,7 @@
     "content_scripts": [{
         "all_frames": true,
         "js": [ "notification.js" ],
-        "matches": [ "http://*/*", "https://*/*", "file:///*" ],
+        "matches": [ "http://*/*", "https://*/*" ],
         "run_at": "document_end"
     }],
 
@@ -15,8 +15,8 @@
     },
     "name": "uTorrent Remote Addder",
     "options_page": "options.html",
-    "permissions": [ "tabs", "http://*/*", "https://*/*", "file:///*", "contextMenus" ],
-    "version": "2.1",
+    "permissions": [ "tabs", "http://*/*", "https://*/*", "contextMenus" ],
+    "version": "2.1.1",
     "minimum_chrome_version": "10"
 
 }

@@ -7,6 +7,8 @@ var adder = function() {
 
     // WebUI secure token
     var token = null;
+    // selected tab
+    var tabId = null;
 
     // verifies that this extension is properly configured
     var checkConfig = function() {
@@ -147,26 +149,20 @@ var adder = function() {
     var displayMessage = function(msg) {
         // send notification msg
         if (showConfirmation()) {
-            chrome.tabs.getSelected(null, function(tab) {
-                chrome.tabs.sendRequest(tab.id, {greeting: "utaNotification", msg: msg});
-            });
+            chrome.tabs.sendRequest(tabId, {greeting: "utaNotification", msg: msg});
         }
     };
 
     // sends error message to notification script
     var displayError = function(msg) {
         // send notification msg
-        chrome.tabs.getSelected(null, function(tab) {
-            chrome.tabs.sendRequest(tab.id, {greeting: "utaNotification", msg: msg});
-        });
+        chrome.tabs.sendRequest(tabId, {greeting: "utaNotification", msg: msg});
     };
 
     // sends hide notification bar message to notification script
     var hideMessages = function() {
         // send notification msg
-        chrome.tabs.getSelected(null, function(tab) {
-            chrome.tabs.sendRequest(tab.id, {greeting: "utaHide"});
-        });
+        chrome.tabs.sendRequest(tabId, {greeting: "utaHide"});
     };
 
     // public interface
@@ -179,22 +175,27 @@ var adder = function() {
                 return false;
             }
 
-            // request security token first
-            token = getToken();
-            if (!token) {
-                return false;
-            }
-            try {
-                displayMessage("Connected to \u00B5Torrent...");
+            chrome.tabs.getSelected(null, function(tab) {
+                // remember torrent tab
+                tabId = tab.id;
 
-                downloadFile(info.linkUrl, uploadTorrent);
-            } finally {
-                if (localStorage["autohide"] == "true") {
-                    hideMessages();
+                // request security token
+                token = getToken();
+                if (!token) {
+                    return;
                 }
-            }
 
-            return true;
+                try {
+                    displayMessage("Connected to \u00B5Torrent...");
+
+                    downloadFile(info.linkUrl, uploadTorrent);
+                } finally {
+                    if (localStorage["autohide"] == "true") {
+                        hideMessages();
+                    }
+                }
+
+            });
         }
     };
 }();
