@@ -1,7 +1,5 @@
 /**
  * @(#)adder.js
- *
- * Copyright (c) vsgvsg@gmail.com
  */
 var adder = function() {
 
