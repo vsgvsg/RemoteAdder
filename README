@@ -1,6 +1,5 @@
-Remote Adder for uTorrent WebUI.
-
+Remote Adder for Chrome.
 
 This extension adds a menu item to the Chrome context menu for links.
 On menu click it downloads a file at link's URL and immediately uploads it to
-the remote instance of uTorrent via WebUI API.
+the remote server via WebUI API.
